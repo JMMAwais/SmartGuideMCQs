@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { subjects } from "../data/mcqData";
  import Header from "../components/Header";
-// import Footer from "../components/Footer";
+import Footer from "../components/Footer";
 import { ChevronRight, MessageSquare } from "lucide-react";
 
 function Index() {
@@ -93,7 +93,16 @@ function Index() {
                   <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
                     {mcq.subjectName}
                   </span>
-
+                        {mcq.videoUrl && (
+                        <a
+                            href={mcq.videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-semibold text-red-500 hover:underline flex items-center gap-1"
+                        >
+                            ▶ Watch Explanation Video
+                        </a>
+                        )}
                   <Link
                     to={`/subject/${mcq.subjectId}`}
                     className="text-xs font-semibold text-primary hover:underline"
@@ -175,7 +184,7 @@ function Index() {
 
       </div>
 
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }
