@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { subjects } from "../data/mcqData";
  import Header from "../components/Header";
 import Footer from "../components/Footer";
+import PromoBanner from "../components/PromoBanner";
 import { ChevronRight, MessageSquare } from "lucide-react";
 
 function Index() {
@@ -43,6 +44,9 @@ function Index() {
           </Link>
         </div>
       </nav>
+
+          {/* Banner */}
+          <PromoBanner /> 
 
       {/* Main Content */}
       <div className="container mx-auto flex gap-6 px-4 py-6">

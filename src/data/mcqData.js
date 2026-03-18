@@ -33,5 +33,11 @@ export const subjects = [
         videoUrl: "https://www.youtube.com/watch?v=example1"
       }
     ]
-  }
+  },
+
 ];
+
+
+export function getSubjectById(id) {
+  return subjects.find((s) => s.id === id) || null;
+}
