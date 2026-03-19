@@ -4,7 +4,7 @@ import { subjects } from "../data/mcqData";
 import Footer from "../components/Footer";
 import PromoBanner from "../components/PromoBanner";
 import { ChevronRight, MessageSquare } from "lucide-react";
-
+import ContactSection from "../components/ContactSection";
 function Index() {
 
   // Collect all MCQs with subject info
@@ -90,6 +90,7 @@ function Index() {
                     </div>
                   ))}
                 </div>
+
 
                 {/* Footer */}
                 <div className="flex items-center justify-between border-t border-border pt-3">
@@ -187,7 +188,7 @@ function Index() {
         </aside>
 
       </div>
-
+       <ContactSection />       
       <Footer />
     </div>
   );
