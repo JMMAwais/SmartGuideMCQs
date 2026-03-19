@@ -53,7 +53,7 @@ function PromoBanner() {
   return (
     <div className="w-full border-b border-border bg-card">
       <div className="container mx-auto px-4 py-3">
-        <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
 
           {banners.map((banner) =>
             banner.external ? (
@@ -62,7 +62,7 @@ function PromoBanner() {
                 href={banner.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`flex flex-1 items-center gap-3 rounded-lg px-4 py-3 text-white transition-opacity hover:opacity-90 ${banner.bg}`}
+                className={`flex items-center gap-3 rounded-lg px-4 py-3 text-white transition-opacity hover:opacity-90 ${banner.bg}`}
               >
                 <BannerContent banner={banner} />
               </a>
@@ -70,7 +70,7 @@ function PromoBanner() {
               <Link
                 key={banner.id}
                 to={banner.link}
-                className={`flex flex-1 items-center gap-3 rounded-lg px-4 py-3 text-white transition-opacity hover:opacity-90 ${banner.bg}`}
+                className={`flex items-center gap-3 rounded-lg px-4 py-3 text-white transition-opacity hover:opacity-90 ${banner.bg}`}
               >
                 <BannerContent banner={banner} />
               </Link>
