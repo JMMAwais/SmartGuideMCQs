@@ -10,6 +10,8 @@ import NotFound from "./pages/NotFound";
 import SubjectPage from "./pages/SubjectPage";
 import AllSubjects from "./pages/AllSubjects";
 import Contact from "./pages/Contact";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 
 const queryClient = new QueryClient();
 
@@ -26,7 +28,8 @@ function App() {
             <Route path="/subjects" element={<AllSubjects />} /> 
             <Route path="/subject/:subjectId" element={<SubjectPage />} />
             <Route path="/contact" element={<Contact />} />
-
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsConditions />} />
             {/* Catch All Route */}
             <Route path="*" element={<NotFound />} />
 
