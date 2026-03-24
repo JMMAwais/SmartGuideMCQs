@@ -1,19 +1,38 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { subjects } from "../data/mcqData";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import PromoBanner from "../components/PromoBanner";
 import ContactSection from "../components/ContactSection";
-import { BadgeCheck, ChevronRight, MessageSquare, Search, Sparkles, TrendingUp } from "lucide-react";
+import FAQ from "../components/FAQ";
+import {
+  BadgeCheck, ChevronRight, ChevronLeft, FileText, MessageSquare,
+  PlayCircle, Search, Sparkles, TrendingUp, ClipboardCheck
+} from "lucide-react";
+
+const MCQS_PER_PAGE = 10;
 
 function Index() {
+  const [currentPage, setCurrentPage] = useState(1);
+
   const allMcqs = subjects.flatMap((s) =>
     s.mcqs.map((mcq) => ({ ...mcq, subjectName: s.name, subjectId: s.id }))
+  );
+
+  const totalPages = Math.ceil(allMcqs.length / MCQS_PER_PAGE);
+  const paginatedMcqs = allMcqs.slice(
+    (currentPage - 1) * MCQS_PER_PAGE,
+    currentPage * MCQS_PER_PAGE
   );
 
   const mainSubs = subjects.filter((s) => s.category === "main");
   const otherSubs = subjects.filter((s) => s.category === "other");
   const featuredSubjects = mainSubs.slice(0, 6);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,7 +62,7 @@ function Index() {
       {/* Hero Section */}
       <section className="border-b border-border bg-primary text-primary-foreground">
         <div className="container mx-auto grid gap-10 px-4 py-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-16">
-          
+
           <div className="space-y-6">
             <span className="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-white/90">
               <Sparkles className="h-3.5 w-3.5" />
@@ -60,11 +79,7 @@ function Index() {
             </div>
 
             <div className="flex flex-wrap gap-3 text-sm text-white/85">
-              {[
-                "Subject-wise practice",
-                "Quick revision flow",
-                "Competitive exam focus",
-              ].map((item) => (
+              {["Subject-wise practice", "Quick revision flow", "Competitive exam focus"].map((item) => (
                 <div key={item} className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2">
                   <BadgeCheck className="h-4 w-4" />
                   {item}
@@ -124,7 +139,7 @@ function Index() {
               </div>
               <Link
                 to="/subjects"
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity text-center"
               >
                 Browse all subjects
               </Link>
@@ -134,15 +149,61 @@ function Index() {
         </div>
       </section>
 
-      {/* Promo Banner */}
-      <PromoBanner />
+      {/* Quick Access Banners */}
+      <section className="container mx-auto px-4 py-5">
+        <div className="grid gap-4 sm:grid-cols-3">
+
+          <a
+            href="#"
+            className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-5 shadow transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100">
+              <FileText className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-foreground">Past Papers</p>
+              <p className="text-xs text-muted-foreground">Download FREE past papers for all subjects</p>
+            </div>
+            <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+          </a>
+              <a
+          
+            href="#"
+            className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-5 shadow transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-red-100">
+              <PlayCircle className="h-5 w-5 text-red-500" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-foreground">Video Lectures</p>
+              <p className="text-xs text-muted-foreground">Watch FREE video lectures on YouTube</p>
+            </div>
+            <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+          </a>
+
+          <a
+            href="#"
+            className="group flex items-center gap-4 rounded-xl border border-border bg-card px-5 py-5 shadow transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary">
+              <ClipboardCheck className="h-5 w-5 text-secondary-foreground" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-foreground">Online Tests</p>
+              <p className="text-xs text-muted-foreground">Take FREE tests & check your preparation</p>
+            </div>
+            <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1" />
+          </a>
+
+        </div>
+      </section>
 
       {/* Main Content */}
       <div className="container mx-auto flex gap-6 px-4 py-6">
 
         <main className="min-w-0 flex-1">
           <div className="flex flex-col gap-4">
-            {allMcqs.map((mcq) => (
+            {paginatedMcqs.map((mcq) => (
               <article
                 key={`${mcq.subjectId}-${mcq.id}`}
                 className="rounded-xl border border-border bg-card p-5 shadow transition-shadow hover:shadow-md"
@@ -198,6 +259,43 @@ function Index() {
               </article>
             ))}
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="mt-6 flex items-center justify-center gap-2">
+
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="h-4 w-4" /> Previous
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    page === currentPage
+                      ? "bg-primary text-white"
+                      : "border border-border hover:bg-secondary"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-1 rounded-lg border border-border px-3 py-2 text-sm font-medium hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next <ChevronRight className="h-4 w-4" />
+              </button>
+
+            </div>
+          )}
         </main>
 
         {/* Sidebar */}
@@ -255,8 +353,9 @@ function Index() {
       </div>
 
       {/* Contact Section */}
-      <ContactSection />
-
+       <hr></hr>
+      <ContactSection /> 
+         <FAQ />     
       <Footer />
     </div>
   );
