@@ -29,6 +29,7 @@ function Footer() {
               <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
               <li><Link to="/subjects" className="hover:text-primary transition-colors">All Subjects</Link></li>
               <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              <li><Link to="/about" className="transition-colors hover:text-primary">About Us</Link></li>
               <li><Link to="/login" className="hover:text-primary transition-colors">Login</Link></li>
               <li><Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
 <li><Link to="/terms" className="hover:text-primary transition-colors">Terms & Conditions</Link></li>
