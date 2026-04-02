@@ -3,26 +3,33 @@ import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Lock, Mail, ShieldCheck } from "lucide-react";
-
-// Simple admin credentials
-const ADMIN_EMAIL = "admin@mcqprep.com";
-const ADMIN_PASSWORD = "admin123";
+import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      localStorage.setItem("isAdmin", "true");
-      navigate("/admin");
-    } else {
+    try {
+      setLoading(true);
+      const user = await login(email, password);
+
+      if (user?.roles?.includes("Admin")) {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
       setError("Invalid credentials. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -55,7 +62,7 @@ function Login() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
                     type="email"
-                    placeholder="admin@mcqprep.com"
+                    placeholder="example@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full rounded-lg border border-input pl-10 pr-3 py-2 text-sm outline-none focus:border-primary"
@@ -88,14 +95,11 @@ function Login() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                disabled={loading}
+                className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Sign In
+                {loading ? "Signing in..." : "Sign In"}
               </button>
-
-              <p className="text-xs text-center text-muted-foreground mt-4">
-                Demo credentials: admin@mcqprep.com / admin123
-              </p>
 
             </form>
           </div>

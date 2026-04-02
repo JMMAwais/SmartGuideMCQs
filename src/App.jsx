@@ -14,6 +14,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
+import ScrollToTop from "./components/ScrollToTop";
+import AboutUs from "./pages/AboutUs";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +27,7 @@ function App() {
         {/* <Sonner /> */}
 
         <BrowserRouter>
+         <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/subjects" element={<AllSubjects />} /> 
@@ -34,6 +37,7 @@ function App() {
             <Route path="/terms" element={<TermsConditions />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/about" element={<AboutUs />} />
             {/* Catch All Route */}
             <Route path="*" element={<NotFound />} />
 
