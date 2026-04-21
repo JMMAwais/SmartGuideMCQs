@@ -6,11 +6,13 @@ import * as store from "../lib/adminStore";
 import OverviewTab from "../components/admin/OverviewTab";
 import SubjectsTab from "../components/admin/SubjectsTab";
 import MCQsTab from "../components/admin/MCQsTab";
+import UsersTab from "../components/admin/UsersTab";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ResponsiveContainer, Tooltip,
 } from "recharts";
 import {
   Bell, BookOpen, Check, Edit, Plus, Trash2, X, ClipboardList, BarChart3, TrendingUp,
+  KeyRound, LogOut, Lock, Eye, EyeOff,
 } from "lucide-react";
 
 // ─── Chart Colors ───
@@ -18,6 +20,127 @@ const CHART_COLORS = [
   "#3b82f6", "#db2029", "#ef4444", "#3b82f6",
   "#22c55e", "#eab308", "#a855f7", "#f97316",
 ];
+
+// ─── Change Password Modal ───
+function ChangePasswordModal({ open, onClose }) {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showOld, setShowOld] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setMessage(null);
+    if (oldPassword !== "admin123") {
+      setMessage({ type: "error", text: "Old password is incorrect." });
+      return;
+    }
+    if (newPassword.length < 6) {
+      setMessage({ type: "error", text: "New password must be at least 6 characters." });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setMessage({ type: "error", text: "Passwords do not match." });
+      return;
+    }
+    setMessage({ type: "success", text: "Password changed successfully!" });
+    setOldPassword(""); setNewPassword(""); setConfirmPassword("");
+  };
+
+  const handleClose = () => {
+    setMessage(null);
+    setOldPassword(""); setNewPassword(""); setConfirmPassword("");
+    onClose();
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-xl">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <Lock className="h-5 w-5 text-primary" /> Change Password
+          </h3>
+          <button onClick={handleClose} className="text-muted-foreground hover:text-foreground">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Old Password */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-foreground">Old Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type={showOld ? "text" : "password"}
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                placeholder="Enter old password"
+                className="w-full h-10 rounded-md border border-input bg-background pl-10 pr-10 text-sm outline-none focus:border-primary"
+                required
+              />
+              <button type="button" onClick={() => setShowOld(!showOld)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                {showOld ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* New Password */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-foreground">New Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type={showNew ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                className="w-full h-10 rounded-md border border-input bg-background pl-10 pr-10 text-sm outline-none focus:border-primary"
+                required
+              />
+              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-foreground">Confirm New Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Re-enter new password"
+                className="w-full h-10 rounded-md border border-input bg-background pl-10 text-sm outline-none focus:border-primary"
+                required
+              />
+            </div>
+          </div>
+
+          {message && (
+            <p className={`text-sm font-medium ${message.type === "success" ? "text-green-600" : "text-red-500"}`}>
+              {message.text}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+          >
+            Update Password
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 // ─── Subject Form ───
 function SubjectForm({ initial, onSave, onCancel }) {
@@ -75,10 +198,7 @@ function SubjectForm({ initial, onSave, onCancel }) {
         </div>
       </div>
       <div className="flex gap-2 justify-end">
-        <button
-          onClick={onCancel}
-          className="rounded-md border border-border px-4 py-1.5 text-sm text-muted-foreground hover:bg-muted"
-        >
+        <button onClick={onCancel} className="rounded-md border border-border px-4 py-1.5 text-sm text-muted-foreground hover:bg-muted">
           Cancel
         </button>
         <button
@@ -128,9 +248,7 @@ function MCQForm({ initial, onSave, onCancel }) {
           <label className="text-sm font-medium text-foreground flex items-center gap-2">
             Option {String.fromCharCode(65 + i)}
             {correctIndex === i && (
-              <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
-                Correct
-              </span>
+              <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">Correct</span>
             )}
           </label>
           <div className="flex gap-2">
@@ -142,9 +260,7 @@ function MCQForm({ initial, onSave, onCancel }) {
             <button
               onClick={() => setCorrectIndex(i)}
               className={`rounded-md px-3 py-1.5 text-sm border transition-colors ${
-                correctIndex === i
-                  ? "bg-primary text-white border-primary"
-                  : "border-border text-muted-foreground hover:bg-muted"
+                correctIndex === i ? "bg-primary text-white border-primary" : "border-border text-muted-foreground hover:bg-muted"
               }`}
             >
               <Check className="h-4 w-4" />
@@ -170,10 +286,7 @@ function MCQForm({ initial, onSave, onCancel }) {
         />
       </div>
       <div className="flex gap-2 justify-end">
-        <button
-          onClick={onCancel}
-          className="rounded-md border border-border px-4 py-1.5 text-sm text-muted-foreground hover:bg-muted"
-        >
+        <button onClick={onCancel} className="rounded-md border border-border px-4 py-1.5 text-sm text-muted-foreground hover:bg-muted">
           Cancel
         </button>
         <button
@@ -181,8 +294,7 @@ function MCQForm({ initial, onSave, onCancel }) {
           onClick={() =>
             onSave({
               id: initial?.id ?? Date.now(),
-              question, options, correctIndex,
-              explanation,
+              question, options, correctIndex, explanation,
               youtubeUrl: youtubeUrl || undefined,
             })
           }
@@ -215,7 +327,7 @@ function Modal({ open, onClose, title, children }) {
 
 // ─── Main Dashboard ───
 function AdminDashboard() {
-  const { isAdmin } = useAuth();
+const { isAdmin, logout, user,isLoggedIn } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [subjects, setSubjects] = useState(store.getSubjects());
   const [pending, setPending] = useState(store.getPendingMCQs());
@@ -230,6 +342,10 @@ function AdminDashboard() {
   const [mcqSearch, setMcqSearch] = useState("");
   const [addMcqModalOpen, setAddMcqModalOpen] = useState(false);
   const [addMcqSubjectId, setAddMcqSubjectId] = useState("");
+
+  // New states
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   const refresh = () => {
     setSubjects(store.getSubjects());
@@ -246,7 +362,7 @@ function AdminDashboard() {
     if (subjects.length > 0) setAddMcqSubjectId(subjects[0].id);
   }, [subjects]);
 
-  if (!isAdmin) return <Navigate to="/login" replace />;
+ if (!isAdmin && !isLoggedIn) return <Navigate to="/login" replace />;
 
   const unreadCount = notifications.filter((n) => !n.read).length;
   const pendingCount = pending.filter((p) => p.status === "pending").length;
@@ -271,7 +387,7 @@ function AdminDashboard() {
   ];
 
   return (
-  <div className="h-screen flex w-full bg-background overflow-hidden">
+    <div className="h-screen flex w-full bg-background overflow-hidden">
       <AdminSidebar
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -280,20 +396,73 @@ function AdminDashboard() {
       />
 
       <div className="flex-1 flex flex-col min-w-0">
+
         {/* Header */}
         <header className="h-14 flex items-center justify-between border-b border-border px-4 bg-card shrink-0">
           <h1 className="text-lg font-bold text-foreground">Admin Dashboard</h1>
-          <button
-            onClick={() => { setShowNotifs(!showNotifs); store.markAllNotificationsRead(); refresh(); }}
-            className="relative rounded-lg border border-border p-2 text-muted-foreground hover:bg-muted"
-          >
-            <Bell className="h-4 w-4" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                {unreadCount}
-              </span>
-            )}
-          </button>
+          <div className="flex items-center gap-2">
+
+            {/* Bell Icon */}
+            <button
+              onClick={() => { setShowNotifs(!showNotifs); store.markAllNotificationsRead(); refresh(); }}
+              className="relative rounded-lg border border-border p-2 text-muted-foreground hover:bg-muted"
+            >
+              <Bell className="h-4 w-4" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+
+            {/* Avatar with Dropdown */}
+            <div className="relative">
+            <div
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold cursor-pointer hover:bg-primary/20 transition-colors"
+              >
+                {user?.name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || "A"}
+              </div>
+              {showProfileMenu && (
+                <>
+                  {/* Backdrop */}
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setShowProfileMenu(false)}
+                  />
+                  {/* Dropdown */}
+                  <div className="absolute right-0 top-10 z-50 w-52 rounded-xl border border-border bg-card shadow-lg p-1">
+                    {/* User Info */}
+                    <div className="px-3 py-2 mb-1 border-b border-border">
+                   <p className="text-sm font-semibold text-foreground">{user?.name || user?.username || "Admin"}</p>
+                   <p className="text-xs text-muted-foreground">{user?.email || "admin@mcqprep.com"}</p>
+                    </div>
+                    {/* Change Password */}
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        setShowChangePassword(true);
+                      }}
+                      className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted transition-colors"
+                    >
+                      <KeyRound className="h-4 w-4" /> Change Password
+                    </button>
+                    {/* Logout */}
+                    <button
+                      onClick={() => {
+                        setShowProfileMenu(false);
+                        logout?.();
+                      }}
+                      className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="h-4 w-4" /> Logout
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+          </div>
         </header>
 
         <main className="flex-1 overflow-y-auto p-6">
@@ -319,16 +488,13 @@ function AdminDashboard() {
             </div>
           )}
 
-          {/* ── Overview Tab ── */}
-        {activeTab === "overview" && <OverviewTab />}
+          {/* Tabs */}
+          {activeTab === "overview" && <OverviewTab />}
+          {activeTab === "subjects" && <SubjectsTab />}
+          {activeTab === "mcqs" && <MCQsTab />}
+          {activeTab === "users" && <UsersTab />}
 
-          {/* ── Subjects Tab ── */}
-        {activeTab === "subjects" && <SubjectsTab />}
-
-          {/* ── MCQs Tab ── */}
-        {activeTab === "mcqs" && <MCQsTab />}
-
-          {/* ── Submissions Tab ── */}
+          {/* Submissions Tab */}
           {activeTab === "submissions" && (
             <div>
               <h2 className="text-lg font-semibold text-foreground mb-4">User Submitted MCQs</h2>
@@ -386,12 +552,11 @@ function AdminDashboard() {
             </div>
           )}
 
-          {/* ── Analytics Tab ── */}
+          {/* Analytics Tab */}
           {activeTab === "analytics" && (
             <div className="space-y-6">
               <h2 className="text-lg font-semibold text-foreground">Analytics Overview</h2>
               <div className="grid gap-6 lg:grid-cols-2">
-
                 <div className="rounded-xl border border-border bg-card p-5 shadow">
                   <h3 className="mb-4 text-base font-bold text-foreground flex items-center gap-2">
                     <BarChart3 className="h-5 w-5 text-primary" /> MCQs per Subject
@@ -470,17 +635,21 @@ function AdminDashboard() {
                     ))}
                   </div>
                 </div>
-
               </div>
             </div>
           )}
 
         </main>
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        open={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
+
     </div>
   );
 }
 
 export default AdminDashboard;
-
-

@@ -1,23 +1,28 @@
-import { BookOpen, ClipboardList, BarChart3, Bell, LogOut, LayoutDashboard } from "lucide-react";
+import { BookOpen, ClipboardList, BarChart3, Bell, LogOut, LayoutDashboard,Users } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const navItems = [
-  { id: "overview", label: "Overview", icon: LayoutDashboard },
-  { id: "subjects", label: "Subjects", icon: BookOpen },
-  { id: "mcqs", label: "MCQs", icon: ClipboardList },
+  { id: "overview", label: "Overview", icon: LayoutDashboard,permission: null  },
+  { id: "subjects", label: "Subjects", icon: BookOpen ,permission: "Permissions.Subject.Create"},
+  { id: "mcqs", label: "MCQs", icon: ClipboardList , permission: "Permissions.MCQ.Create"},
   { id: "submissions", label: "Submissions", icon: Bell },
   { id: "analytics", label: "Analytics", icon: BarChart3 },
+  { id: "users", label: "Users", icon: Users },
 ];
 
 function AdminSidebar({ activeTab, onTabChange, pendingCount }) {
-  const { logout } = useAuth();
+  const { logout,hasPermission } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
     navigate("/login");
   };
+
+   const allowedItems = navItems.filter(item =>
+    item.permission === null || hasPermission(item.permission)
+  );
 
   return (
     <aside className="flex h-screen w-56 shrink-0 flex-col border-r border-border bg-card">
@@ -32,7 +37,7 @@ function AdminSidebar({ activeTab, onTabChange, pendingCount }) {
       {/* Nav Items */}
       <nav className="flex-1 px-2">
         <ul className="flex flex-col gap-1">
-          {navItems.map((item) => (
+          {allowedItems.map((item) => (
             <li key={item.id}>
               <button
                 onClick={() => onTabChange(item.id)}
