@@ -24,3 +24,27 @@ export const logoutApi = async (refreshToken) => {
   const response = await axiosInstance.post(`${BASE_URL}/Auth/logout`, { refreshToken });
   return response.data;
 };
+// Forgot Password
+export const forgotPasswordApi = async (email) => {
+  const response = await axios.post(`${BASE_URL}/Auth/forgot-password`, JSON.stringify(email), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return response.data;
+};
+
+export const createUser = async (userData) => {
+  const res = await axiosInstance.post(`${BASE_URL}/Auth/register-user`, userData);
+  return res.data;
+};
+
+export const getMyPermissions = async () => {
+  const res = await axiosInstance.get("/Auth/my-permissions");
+  return res.data;
+};
+
+export const getAllUsers = async () => {
+  const res = await axiosInstance.post("/Auth/get-all-users");
+  return res.data;
+};

@@ -73,7 +73,7 @@ axiosInstance.interceptors.response.use(
       try {
         // ✅ Plain axios use karo — infinite loop se bachne ke liye
         const res = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/Auth/refresh`,
+          `${import.meta.env.VITE_API_BASE_URL}/auth/refresh-token`,
           {
             accessToken: storedAccess,
             refreshToken: storedRefresh,

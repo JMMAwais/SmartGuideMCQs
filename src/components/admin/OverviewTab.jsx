@@ -72,7 +72,6 @@ const [chartLoading, setChartLoading] = useState(true);
 }, []);
  
   // Chart data
- // Chart mein
 {chartLoading ? (
   <div className="h-[280px] flex items-center justify-center">
     <div className="h-8 w-32 rounded bg-gray-200 animate-pulse" />

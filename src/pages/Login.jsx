@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Lock, Mail, ShieldCheck } from "lucide-react";
@@ -11,7 +11,7 @@ function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login} = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,7 +23,11 @@ function Login() {
 
       if (user?.roles?.includes("Admin")) {
         navigate("/admin");
-      } else {
+      }
+       else if (user?.roles?.includes("User")) {
+      navigate("/admin"); 
+      } 
+      else {
         navigate("/");
       }
     } catch (err) {
@@ -73,7 +77,10 @@ function Login() {
 
               {/* Password */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Password</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-foreground">Password</label>
+                 
+                </div>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <input
@@ -100,7 +107,11 @@ function Login() {
               >
                 {loading ? "Signing in..." : "Sign In"}
               </button>
-
+            <div className="text-right">
+              <Link to="/forgot-password" className="text-xs text-primary hover:underline">
+                Forgot Password?
+              </Link>
+            </div>
             </form>
           </div>
 
