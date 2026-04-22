@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { User, Mail, Lock, Shield, Plus, Search, Edit, X, Trash2 } from "lucide-react";
-import { createUser, getAllUsers } from "../../services/authService";
+import { createUser, getAllUsers,toggleUserStatus } from "../../services/authService";
 
 const ALL_PERMISSIONS = [
   { key: "019d4aa0-592c-7f0e-99db-910b544b1c73", label: "MCQ Create", group: "Content" },
@@ -81,6 +81,22 @@ function UsersTab() {
       setLoading(false);
     }
   };
+
+  const toggleStatus = async (userId) => {
+  try {
+    const res = await toggleUserStatus(userId);
+    if (res.success) {
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userId ? { ...u, isActive: res.isActive } : u
+        )
+      );
+    }
+  } catch (err) {
+    console.error("Toggle status error:", err);
+  }
+};
+
 
   const filteredUsers = users.filter((u) =>
     u.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -246,8 +262,12 @@ function UsersTab() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="rounded-full px-2.5 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-700">
-                      active
+                    <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                      user.isActive
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-red-100 text-red-600"
+                    }`}>
+                      {user.isActive ? "active" : "inactive"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-sm">
@@ -258,9 +278,17 @@ function UsersTab() {
                       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted transition-colors">
                         <Edit className="h-4 w-4" />
                       </button>
-                      <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted transition-colors">
-                        <X className="h-4 w-4" />
-                      </button>
+                    <button
+                      onClick={() => toggleStatus(user.id)}
+                      className={`rounded-md p-1.5 transition-colors ${
+                        user.isActive
+                          ? "text-muted-foreground hover:bg-amber-100 hover:text-amber-600"
+                          : "text-muted-foreground hover:bg-emerald-100 hover:text-emerald-600"
+                      }`}
+                      title={user.isActive ? "Deactivate" : "Activate"}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
                       <button className="rounded-md p-1.5 text-red-500 hover:bg-red-50 transition-colors">
                         <Trash2 className="h-4 w-4" />
                       </button>
