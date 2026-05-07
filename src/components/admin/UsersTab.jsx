@@ -270,9 +270,11 @@ function UsersTab() {
                       {user.isActive ? "active" : "inactive"}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground text-sm">
-                    {new Date().toLocaleDateString()}
-                  </td>
+                 <td className="px-4 py-3 text-muted-foreground text-sm">
+                  {user.createdAt 
+                    ? new Date(user.createdAt).toLocaleDateString() 
+                    : "N/A"}
+                </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button className="rounded-md p-1.5 text-muted-foreground hover:bg-muted transition-colors">
